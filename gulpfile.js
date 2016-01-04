@@ -1,4 +1,3 @@
-var gulp = require('gulp');
 var webserver = require('gulp-webserver');
 
 var gulp      = require('gulp'),
@@ -8,7 +7,19 @@ var gulp      = require('gulp'),
   rename      = require("gulp-rename"),
   htmlreplace = require('gulp-html-replace'),
   minifyHTML  = require('gulp-minify-html');
+  var less = require('gulp-less');
+var path = require('path');
 
+gulp.task('webserver', function() {
+  gulp.src('./app/')
+    .pipe(webserver({
+      port:1234,
+      livereload: true,
+      directoryListing: false,
+      open: true,
+      fallback: 'index.html'
+    }));
+});
 
 gulp.task('concat', function() {
   return gulp.src('./app/css/*.css')
@@ -49,19 +60,17 @@ gulp.task('html-replace',function() {
     .pipe(gulp.dest('./build/'));
 });
 
+
+gulp.task('less', function () {
+  return gulp.src('./app/less/**/*.less')
+    .pipe(less({
+      paths: [ path.join(__dirname, 'less', 'includes') ]
+    }))
+    .pipe(gulp.dest('./app/css/'));
+});
+
 gulp.task('default', ['html-replace','minify-css', 'uglify']);
 
 
 
-gulp.task('webserver', function() {
-  gulp.src('./app/')
-    .pipe(webserver({
-      port:1234,
-      livereload: true,
-      directoryListing: false,
-      open: true,
-      fallback: 'index.html'
-    }));
-});
-
-gulp.task('webserver',['webserver']);
+gulp.task('web',['webserver']);
